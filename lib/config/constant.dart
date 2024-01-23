@@ -47,18 +47,20 @@ var a = GoogleFonts.playfairDisplay;
 class MyClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
+    // double w = size.width;
+    // double h = size.height;
     double w = size.width;
-    double h = size.height;
+    double h = 260;
     Path path_0 = Path();
-    path_0.moveTo(size.width * 0.2012000, size.height * 0.0040000);
-    path_0.quadraticBezierTo(size.width * 0.0704000, size.height * 0.0682500, size.width * 0.1292000, size.height * 0.2470000);
+    path_0.moveTo(w * 0.2012000, h * 0.0040000);
+    path_0.quadraticBezierTo(w * 0.0704000, h * 0.0682500, w * 0.1292000, h * 0.2470000);
     path_0.cubicTo(
-        size.width * 0.2280000, size.height * 0.4095000, size.width * 0.1712000, size.height * 0.5905000, size.width * 0.0956000, size.height * 0.6450000);
+        w * 0.2280000, h * 0.4095000, w * 0.1712000, h * 0.5905000, w * 0.0956000, h * 0.6450000);
     path_0.cubicTo(
-        size.width * 0.0231000, size.height * 0.7162500, size.width * -0.0311000, size.height * 0.9487500, size.width * 0.0440000, size.height * 1.0020000);
-    path_0.quadraticBezierTo(size.width * 0.2830000, size.height * 1.0002500, size.width, size.height * 0.9950000);
-    path_0.lineTo(size.width, size.height * -0.0050000);
-    path_0.lineTo(size.width * 0.2012000, size.height * 0.0040000);
+        w * 0.0231000, h * 0.7162500, w * -0.0311000, h * 0.9487500, w * 0.0440000, h * 1.0020000);
+    path_0.quadraticBezierTo(w * 0.2830000, h * 1.0002500, w, h * 0.9950000);
+    path_0.lineTo(w, h * -0.0050000);
+    path_0.lineTo(w * 0.2012000, h * 0.0040000);
     path_0.close();
     return path_0;
   }

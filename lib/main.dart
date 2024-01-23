@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'app/bloc/bloc/list_foods_bloc.dart';
 import 'app/routes/app_pages.dart';
 import 'config/color_constants.dart';
 
 void main() {
   initializeDateFormatting();
+
   runApp(
-    GetMaterialApp(
-      title: "Application",
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-      theme: kPrimaryTheme,
-      defaultTransition: Transition.cupertino,
+    bloc.MultiBlocProvider(
+      providers: [
+        bloc.BlocProvider(
+          create: (context) => ListFoodsBloc(),
+        )
+      ],
+      child: GetMaterialApp(
+        title: "Application",
+        initialRoute: AppPages.INITIAL,
+        getPages: AppPages.routes,
+        theme: kPrimaryTheme,
+        defaultTransition: Transition.cupertino,
+      ),
     ),
   );
 }
