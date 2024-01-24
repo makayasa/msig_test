@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:skeleton/app/core/network.dart';
+import 'package:skeleton/app/core/network_utils.dart';
 import 'package:skeleton/config/environtment.dart';
 import 'package:skeleton/config/function_utils.dart';
 

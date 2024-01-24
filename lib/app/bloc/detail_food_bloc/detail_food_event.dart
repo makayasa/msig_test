@@ -9,8 +9,6 @@ sealed class DetailFoodEvent extends Equatable {
 
 class DetailFoodGet extends DetailFoodEvent {}
 
-class DetailFoodAddToFavorite extends DetailFoodEvent {}
-
 class DetailFoodChangeAppbarOpacity extends DetailFoodEvent {
   const DetailFoodChangeAppbarOpacity({required this.offset});
   final double offset;

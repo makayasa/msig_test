@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
 import 'package:skeleton/app/bloc/detail_food_bloc/detail_food_bloc.dart';
+import 'package:skeleton/app/bloc/favorite_food_bloc/favorite_food_bloc.dart';
 import 'package:skeleton/app/components/default_text.dart';
 import 'package:skeleton/config/color_constants.dart';
 import 'package:skeleton/config/constant.dart';
@@ -40,7 +41,9 @@ class _DetailFoodViewState extends State<DetailFoodView> {
     final bloc = context.read<DetailFoodBloc>();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.read<FavoriteFoodBloc>().add(FavoriteFoodsAddFavorite());
+        },
       ),
       backgroundColor: kBgWhite,
       body: BlocConsumer<DetailFoodBloc, DetailFoodState>(

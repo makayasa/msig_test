@@ -6,8 +6,11 @@ part 'favorite_food_state.dart';
 
 class FavoriteFoodBloc extends Bloc<FavoriteFoodEvent, FavoriteFoodState> {
   FavoriteFoodBloc() : super(FavoriteFoodInitial()) {
-    on<FavoriteFoodEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<FavoriteFoodEvent>((event, emit) {});
+    on<FavoriteFoodsAddFavorite>(
+      (event, emit) {
+        
+      },
+    );
   }
 }
