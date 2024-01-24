@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:get/get.dart';
 import 'package:skeleton/app/bloc/detail_food_bloc/detail_food_bloc.dart';
+import 'package:skeleton/config/constant.dart';
 
 import '../modules/detail_food/bindings/detail_food_binding.dart';
 import '../modules/detail_food/views/detail_food_view.dart';
@@ -33,6 +34,8 @@ class AppPages {
         create: (context) => DetailFoodBloc(),
         child: const DetailFoodView(),
       ),
+      transitionDuration: kDefaultDuration,
+      curve: kDefaultCurve,
       binding: DetailFoodBinding(),
     ),
   ];

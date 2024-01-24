@@ -49,6 +49,7 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
     return Scaffold(
       appBar: AppBar(
         title: DefText('Foodee').huge,
+        surfaceTintColor: Colors.transparent,
         centerTitle: true,
         actions: [
           GestureDetector(

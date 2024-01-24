@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:skeleton/app/core/network.dart';
 import 'package:skeleton/config/environtment.dart';
@@ -14,8 +15,14 @@ part 'detail_food_state.dart';
 class DetailFoodBloc extends Bloc<DetailFoodEvent, DetailFoodState> {
   Food foodData = Food();
   final _networkUtil = NetworkUtil.internal();
+  double opacity = 0.0;
+  final scrollController = ScrollController();
 
   void getIngridients() {}
+
+  void appBarOpacityChange() {
+    opacity = 1;
+  }
 
   DetailFoodBloc() : super(DetailFoodInitial()) {
     on<DetailFoodEvent>((event, emit) {});
@@ -28,6 +35,7 @@ class DetailFoodBloc extends Bloc<DetailFoodEvent, DetailFoodState> {
           Response res = await _networkUtil.get(
             '$baseUrl/lookup.php?i=$id',
           );
+          // scrollController.jumpTo(135);
           foodData = Food.fromJson(res.data['meals'].first);
           // logKey('res DetailFoodGet', );
           logKey('video id', foodData.strYoutube!.split('v=').last);
@@ -38,12 +46,23 @@ class DetailFoodBloc extends Bloc<DetailFoodEvent, DetailFoodState> {
         emit(DetailFoodComplete());
       },
     );
+    on<DetailFoodChangeAppbarOpacity>(
+      (event, emit) {
+        if (event.offset >= 100 + 250) {
+          emit(DetailFoodAppBarShowed());
+        } else {
+          emit(DetailFoodAppBarNotShowed());
+        }
+        // logKey('eventt', event.offset);
+      },
+    );
   }
 
   @override
   Future<void> close() {
     // TODO: implement close
     logKey('detailfoodbloc closed');
+    scrollController.dispose();
     return super.close();
   }
 }
