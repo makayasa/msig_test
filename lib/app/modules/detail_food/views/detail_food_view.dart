@@ -65,27 +65,63 @@ class _DetailFoodViewState extends State<DetailFoodView> {
                 controller: bloc.scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
+                  BlocConsumer<DetailFoodBloc, DetailFoodState>(
+                    listener: (context, state) {
+                      // TODO: implement listener
+                      // logKey('listener state change di appbar', state);
+                    },
+                    buildWhen: (previous, current) {
+                      final res = current == DetailFoodAppBarNotShowed() || current == DetailFoodAppBarShowed();
+                      return res;
+                    },
+                    builder: (context, state) {
+                      logKey('appbar rebuilt');
+                      return SliverOpacity(
+                        opacity: state == DetailFoodAppBarShowed() ? 1 : 0,
+                        // opacity: 0,
+                        sliver: SliverAppBar(
+                          pinned: true,
+                          surfaceTintColor: Colors.transparent,
+                          shadowColor: Colors.amber,
+                          elevation: 10,
+                          leading: IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new_outlined,
+                              color: kWhiteMilk,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   SliverToBoxAdapter(
                     child: Container(
-                      // color: Colors.amber.withOpacity(0.6),
-                      height: 350,
+                      height: 250,
                     ),
                   ),
                   // const SliverToBoxAdapter(
                   //   child: SizedBox(height: 10),
                   // ),
+
                   SliverToBoxAdapter(
                     child: Container(
-                      color: kBgWhite,
+                      decoration: const BoxDecoration(
+                        color: kBgWhite,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(10),
+                        ),
+                      ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            child: DefText(
-                              bloc.foodData.strMeal ?? '',
-                              color: kPrimaryColor,
-                              fontWeight: FontWeight.bold,
-                            ).extraHuge,
-                          ),
+                          DefText(
+                            bloc.foodData.strMeal ?? '',
+                            color: kPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                          ).huge,
                           Container(
                             child: DefText(
                               bloc.foodData.strCategory ?? '',
@@ -265,6 +301,26 @@ class _DetailFoodViewState extends State<DetailFoodView> {
                     child: SizedBox(height: 150),
                   ),
                 ],
+              ),
+              Positioned(
+                top: 35,
+                left: 10,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.back();
+                    // logKey('asdasd');
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: kBgWhite,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_outlined,
+                    ),
+                  ),
+                ),
               ),
             ],
           );

@@ -6,6 +6,7 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const LIST_FOOD = _Paths.LIST_FOOD;
   static const DETAIL_FOOD = _Paths.DETAIL_FOOD;
+  static const LIST_FAVORITES_FOOD = _Paths.LIST_FAVORITES_FOOD;
 }
 
 abstract class _Paths {
@@ -13,4 +14,5 @@ abstract class _Paths {
   static const HOME = '/home';
   static const LIST_FOOD = '/list-food';
   static const DETAIL_FOOD = '/detail-food';
+  static const LIST_FAVORITES_FOOD = '/list-favorites-food';
 }
