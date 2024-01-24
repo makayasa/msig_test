@@ -1,4 +1,6 @@
+import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:get/get.dart';
+import 'package:skeleton/app/bloc/detail_food_bloc/detail_food_bloc.dart';
 
 import '../modules/detail_food/bindings/detail_food_binding.dart';
 import '../modules/detail_food/views/detail_food_view.dart';
@@ -27,7 +29,10 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DETAIL_FOOD,
-      page: () => const DetailFoodView(),
+      page: () => bloc.BlocProvider(
+        create: (context) => DetailFoodBloc(),
+        child: const DetailFoodView(),
+      ),
       binding: DetailFoodBinding(),
     ),
   ];

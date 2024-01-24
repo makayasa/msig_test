@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get/route_manager.dart';
 import 'package:skeleton/app/core/network.dart';
+import 'package:skeleton/app/routes/app_pages.dart';
 import 'package:skeleton/config/environtment.dart';
 import 'package:skeleton/config/function_utils.dart';
 import 'package:skeleton/models/food_json_model.dart';
@@ -17,6 +19,13 @@ class ListFoodsBloc extends Bloc<ListFoodsEvent, ListFoodsState> {
   final networkUtil = NetworkUtil.internal();
   final List<Food> listFoods = [];
   int indexPage = 1;
+
+  void toDetailFood(String id, String imgUrl) {
+    Get.toNamed(Routes.DETAIL_FOOD, arguments: {
+      'id': id,
+      'img_url': imgUrl,
+    });
+  }
 
   ListFoodsBloc() : super(ListFoodsInitial()) {
     on<ListFoodsEvent>((event, emit) {});
@@ -52,7 +61,6 @@ class ListFoodsBloc extends Bloc<ListFoodsEvent, ListFoodsState> {
       }
       emit(ListFoodsComplete());
     });
-
     on<ListFoodsPagination>(
       (event, emit) async {
         if (indexPage > 26) {
