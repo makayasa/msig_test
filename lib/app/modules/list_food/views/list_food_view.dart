@@ -49,14 +49,19 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
     final bloc = context.read<ListFoodsBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ListFoodView'),
+        title: DefText('Foodee').huge,
         centerTitle: true,
+        actions: [
+          GestureDetector(
+            onTap: () {},
+            child: const Icon(
+              Icons.favorite,
+              color: kWhiteMilk,
+            ),
+          ),
+          const SizedBox(width: 10),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        context.read<ListFoodsBloc>().add(
-              ListFoodsGet(),
-            );
-      }),
       backgroundColor: kBgWhite,
       body: BlocConsumer<ListFoodsBloc, ListFoodsState>(
         bloc: bloc,
@@ -70,9 +75,6 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
             );
           }
           return MasonryGridView.count(
-            // gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-            //   crossAxisCount: 2,
-            // ),
             controller: scrollController,
             addAutomaticKeepAlives: true,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
