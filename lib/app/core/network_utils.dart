@@ -3,10 +3,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart' as dio;
 
 class NetworkUtil {
-  static NetworkUtil _instance = new NetworkUtil.internal();
+  static final NetworkUtil _instance = NetworkUtil.internal();
   NetworkUtil.internal();
   factory NetworkUtil() => _instance;
-  
+
   final dio.Dio _dio = dio.Dio();
 
   // CookieJar cookieJar = CookieJar();

@@ -20,11 +20,16 @@ class ListFoodsBloc extends Bloc<ListFoodsEvent, ListFoodsState> {
   final List<Food> listFoods = [];
   int indexPage = 1;
 
-  void toDetailFood(String id, String imgUrl) {
+  void toDetailFood(String id, String heroTag, String imgUrl) {
     Get.toNamed(Routes.DETAIL_FOOD, arguments: {
       'id': id,
+      'hero_tag': heroTag,
       'img_url': imgUrl,
     });
+  }
+
+  void toFavoriteFood() {
+    Get.toNamed(Routes.LIST_FAVORITES_FOOD);
   }
 
   ListFoodsBloc() : super(ListFoodsInitial()) {

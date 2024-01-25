@@ -35,10 +35,7 @@ class DetailFoodBloc extends Bloc<DetailFoodEvent, DetailFoodState> {
           Response res = await _networkUtil.get(
             '$baseUrl/lookup.php?i=$id',
           );
-          // scrollController.jumpTo(135);
           foodData = Food.fromJson(res.data['meals'].first);
-          // logKey('res DetailFoodGet', );
-          logKey('video id', foodData.strYoutube!.split('v=').last);
         } on DioException catch (e) {
           emit(DetailFoodError());
           logKey('error DetailFoodGet ${e.response}', e.message);

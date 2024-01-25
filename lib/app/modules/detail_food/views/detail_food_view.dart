@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
+import 'package:skeleton/app/bloc/database_bloc/database_bloc_bloc.dart';
 import 'package:skeleton/app/bloc/detail_food_bloc/detail_food_bloc.dart';
 import 'package:skeleton/app/bloc/favorite_food_bloc/favorite_food_bloc.dart';
 import 'package:skeleton/app/components/default_text.dart';
@@ -19,6 +20,7 @@ class DetailFoodView extends StatefulWidget {
 class _DetailFoodViewState extends State<DetailFoodView> {
   @override
   void initState() {
+    logKey('arg', Get.previousRoute);
     final bloc = context.read<DetailFoodBloc>();
     bloc.add(DetailFoodGet());
     bloc.scrollController.addListener(() {
@@ -42,7 +44,14 @@ class _DetailFoodViewState extends State<DetailFoodView> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<FavoriteFoodBloc>().add(FavoriteFoodsAddFavorite());
+          final favFoodBloc = context.read<FavoriteFoodBloc>();
+          final dbBloc = context.read<DatabaseBloc>();
+          favFoodBloc.add(
+            FavoriteFoodsAddFavorite(
+              foodData: bloc.foodData,
+              dbBloc: dbBloc,
+            ),
+          );
         },
       ),
       backgroundColor: kBgWhite,
@@ -56,12 +65,9 @@ class _DetailFoodViewState extends State<DetailFoodView> {
               SizedBox(
                 height: 350,
                 width: double.infinity,
-                child: Hero(
-                  tag: Get.arguments['id'],
-                  child: CachedNetworkImage(
-                    imageUrl: Get.arguments['img_url'],
-                    fit: BoxFit.cover,
-                  ),
+                child: CachedNetworkImage(
+                  imageUrl: Get.arguments['img_url'],
+                  fit: BoxFit.cover,
                 ),
               ),
               CustomScrollView(

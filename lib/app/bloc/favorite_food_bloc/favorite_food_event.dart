@@ -7,6 +7,20 @@ sealed class FavoriteFoodEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FavoriteFoodsAddFavorite extends FavoriteFoodEvent {}
+class FavoriteFoodGetFavorite extends FavoriteFoodEvent {
+  const FavoriteFoodGetFavorite({required this.dbBloc});
+  final DatabaseBloc dbBloc;
+}
 
-class FavoriteFoodGetFavorite extends FavoriteFoodEvent {}
+class FavoriteFoodsAddFavorite extends FavoriteFoodEvent {
+  const FavoriteFoodsAddFavorite({required this.foodData, required this.dbBloc});
+  // final FoodEntityCompanion foodData;
+  final Food foodData;
+  final DatabaseBloc dbBloc;
+}
+
+class FavoriteFoodRemove extends FavoriteFoodEvent {
+  const FavoriteFoodRemove({required this.mealId, required this.dbBloc});
+  final String mealId;
+  final DatabaseBloc dbBloc;
+}

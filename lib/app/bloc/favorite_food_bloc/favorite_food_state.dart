@@ -9,6 +9,10 @@ sealed class FavoriteFoodState extends Equatable {
 
 final class FavoriteFoodInitial extends FavoriteFoodState {}
 
-final class FavoriteFoodGet extends FavoriteFoodState {}
-
 final class FavoriteFootEmpty extends FavoriteFoodState {}
+
+final class FavoriteFoodLoading extends FavoriteFoodState {}
+
+final class FavoriteFoodComplete extends FavoriteFoodState {}
+
+final class FavoriteFoodError extends FavoriteFoodState {}

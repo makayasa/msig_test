@@ -6,6 +6,8 @@ import 'package:skeleton/app/modules/list_food/components/food_card.dart';
 import 'package:skeleton/config/function_utils.dart';
 
 import '../../../../config/color_constants.dart';
+import '../../../bloc/database_bloc/database_bloc_bloc.dart';
+import '../../../bloc/favorite_food_bloc/favorite_food_bloc.dart';
 import '../../../bloc/list_food_bloc/list_foods_bloc.dart';
 
 class ListFoodView extends StatefulWidget {
@@ -20,7 +22,9 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
   @override
   void initState() {
     // TODO: implement initState
+    final dbBloc = context.read<DatabaseBloc>();
     context.read<ListFoodsBloc>().add(ListFoodsGet());
+    context.read<FavoriteFoodBloc>().add(FavoriteFoodGetFavorite(dbBloc: dbBloc));
     scrollController.addListener(() {
       if (context.read<ListFoodsBloc>().state == ListFoodsPaginationLoading()) {
         return;
@@ -47,13 +51,20 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
     super.build(context);
     final bloc = context.read<ListFoodsBloc>();
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          context.read<DatabaseBloc>().testGet();
+        },
+      ),
       appBar: AppBar(
         title: DefText('Foodee').huge,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              bloc.toFavoriteFood();
+            },
             child: const Icon(
               Icons.favorite,
               color: kWhiteMilk,
@@ -85,14 +96,16 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
             itemBuilder: (context, index) {
               final data = bloc.listFoods[index];
               final imgUrl = data.strMealThumb;
+              // final heroTag = 'list_food_${data.idMeal}_$index';
               return FoodCard(
-                id: data.idMeal ?? '',
+                // heroTag: heroTag,
+                heroTag: '$index',
                 imgUrl: imgUrl ?? '',
                 foodName: data.strMeal ?? '',
                 foodCategory: data.strCategory ?? '',
                 countryName: data.strArea ?? '',
                 onTap: () {
-                  bloc.toDetailFood(data.idMeal ?? '', imgUrl ?? '');
+                  bloc.toDetailFood(data.idMeal ?? '', '$index', imgUrl ?? '');
                 },
               );
             },

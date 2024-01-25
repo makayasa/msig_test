@@ -8,14 +8,14 @@ import '../../../components/default_text.dart';
 class FoodCard extends StatelessWidget {
   const FoodCard({
     super.key,
-    required this.id,
+    required this.heroTag,
     required this.imgUrl,
     required this.foodName,
     required this.foodCategory,
     required this.countryName,
     this.onTap,
   });
-  final String id;
+  final dynamic heroTag;
   final String imgUrl;
   final String foodName;
   final String foodCategory;
@@ -38,21 +38,18 @@ class FoodCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Hero(
-              tag: id,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: 150),
-                  child: CachedNetworkImage(
-                    imageUrl: imgUrl,
-                    placeholder: (context, url) {
-                      return Container(
-                        height: 150,
-                        color: kInactiveColor,
-                      );
-                    },
-                  ),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 150),
+                child: CachedNetworkImage(
+                  imageUrl: imgUrl,
+                  placeholder: (context, url) {
+                    return Container(
+                      height: 150,
+                      color: kInactiveColor,
+                    );
+                  },
                 ),
               ),
             ),
