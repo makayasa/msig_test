@@ -1,9 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get/get.dart';
 import 'package:skeleton/app/bloc/database_bloc/database_bloc_bloc.dart';
 import 'package:skeleton/app/core/database/app_db.dart';
 import 'package:skeleton/config/function_utils.dart';
 import 'package:skeleton/models/food_json_model.dart';
+
+import '../../../config/color_constants.dart';
+import '../../components/default_text.dart';
 
 part 'favorite_food_event.dart';
 part 'favorite_food_state.dart';
@@ -37,8 +41,28 @@ class FavoriteFoodBloc extends Bloc<FavoriteFoodEvent, FavoriteFoodState> {
         emit(FavoriteFoodLoading());
         try {
           final foodEntity = FoodEntityData.fromJson(event.foodData.toJson());
+          final res = await event.dbBloc.db.getFavoriteFood(event.foodData.idMeal!);
+          if (res != null) {
+            Get.snackbar(
+              '',
+              '',
+              titleText: DefText('Allert').large,
+              messageText: DefText('Food Already Exist', color: kWhiteMilk).huge,
+              backgroundColor: kPrimaryColor.withOpacity(0.4),
+              duration: const Duration(seconds: 2),
+            );
+            return;
+          }
           final temp = foodEntity.toCompanion(true);
           await event.dbBloc.db.insertFavoriteFood(temp);
+          Get.snackbar(
+            '',
+            '',
+            titleText: DefText('Attention').large,
+            messageText: DefText('Food Saved', color: kWhiteMilk).huge,
+            backgroundColor: kPrimaryColor.withOpacity(0.4),
+            duration: const Duration(seconds: 2),
+          );
           add(FavoriteFoodGetFavorite(dbBloc: event.dbBloc));
         } catch (e) {
           logKey('error FavoriteFoodsAddFavorite', e);

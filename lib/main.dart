@@ -27,7 +27,7 @@ void main() async {
         ),
       ],
       child: GetMaterialApp(
-        title: "Application",
+        title: "MSIG Test",
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
         theme: kPrimaryTheme,

@@ -15,8 +15,10 @@ part 'detail_food_state.dart';
 class DetailFoodBloc extends Bloc<DetailFoodEvent, DetailFoodState> {
   Food foodData = Food();
   final _networkUtil = NetworkUtil.internal();
-  double opacity = 0.0;
   final scrollController = ScrollController();
+
+  double opacity = 0.0;
+  double iconOpacity = 1.0;
 
   void getIngridients() {}
 
@@ -45,11 +47,24 @@ class DetailFoodBloc extends Bloc<DetailFoodEvent, DetailFoodState> {
     );
     on<DetailFoodChangeAppbarOpacity>(
       (event, emit) {
-        if (event.offset >= 100 + 250) {
-          emit(DetailFoodAppBarShowed());
-        } else {
-          emit(DetailFoodAppBarNotShowed());
+        emit(DetailFoodScroll());
+        // logKey('event.offset', event.offset);
+        logKey('event.offset', event.offset);
+        if (event.offset >= 250 && event.offset <= 350) {
+          opacity = (event.offset / 350);
+          iconOpacity = 1 - (event.offset / 350);
+          emit(DetailFoodScrollDone());
+          return;
         }
+        if (event.offset <= 250) {
+          opacity = 0;
+          iconOpacity = 1;
+          emit(DetailFoodScrollDone());
+          return;
+        }
+        emit(DetailFoodScrollDone());
+        return;
+        if (event.offset >= 100 + 250) {}
         // logKey('eventt', event.offset);
       },
     );

@@ -41,12 +41,12 @@ class FoodCard extends StatelessWidget {
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
               child: Container(
-                constraints: const BoxConstraints(minHeight: 150),
+                height: 180,
                 child: CachedNetworkImage(
                   imageUrl: imgUrl,
                   placeholder: (context, url) {
                     return Container(
-                      height: 150,
+                      height: 180,
                       color: kInactiveColor,
                     );
                   },

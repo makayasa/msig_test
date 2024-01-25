@@ -30,7 +30,7 @@ class _ListFavoritesFoodViewState extends State<ListFavoritesFoodView> {
     final bloc = context.read<FavoriteFoodBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: DefText('Your Favorites Are Here').huge,
+        title: DefText('Your Favorites Are Here', color: kWhiteMilk).huge,
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
@@ -42,13 +42,7 @@ class _ListFavoritesFoodViewState extends State<ListFavoritesFoodView> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          logKey(Get.routeTree.routes);
-          // final dbBloc = context.read<DatabaseBloc>();
-          // context.read<FavoriteFoodBloc>().add(FavoriteFoodGetFavorite(dbBloc: dbBloc));
-        },
-      ),
+      backgroundColor: kBgWhite,
       body: BlocConsumer<FavoriteFoodBloc, FavoriteFoodState>(
         bloc: bloc,
         listener: (context, state) {

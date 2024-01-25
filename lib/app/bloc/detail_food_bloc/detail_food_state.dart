@@ -15,6 +15,6 @@ final class DetailFoodComplete extends DetailFoodState {}
 
 final class DetailFoodError extends DetailFoodState {}
 
-final class DetailFoodAppBarNotShowed extends DetailFoodState {}
+final class DetailFoodScroll extends DetailFoodState {}
 
-final class DetailFoodAppBarShowed extends DetailFoodState {}
+final class DetailFoodScrollDone extends DetailFoodState {}

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:skeleton/app/components/default_text.dart';
 import 'package:skeleton/app/modules/list_food/components/food_card.dart';
-import 'package:skeleton/config/function_utils.dart';
 
 import '../../../../config/color_constants.dart';
 import '../../../bloc/database_bloc/database_bloc_bloc.dart';
@@ -51,13 +50,8 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
     super.build(context);
     final bloc = context.read<ListFoodsBloc>();
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          context.read<DatabaseBloc>().testGet();
-        },
-      ),
       appBar: AppBar(
-        title: DefText('Foodee').huge,
+        title: DefText('Foodee', color: kWhiteMilk).huge,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         actions: [
@@ -76,9 +70,7 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
       backgroundColor: kBgWhite,
       body: BlocConsumer<ListFoodsBloc, ListFoodsState>(
         bloc: bloc,
-        listener: (context, state) {
-          logKey('listener', state);
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           if (state == ListFoodsLoading()) {
             return const Center(
@@ -96,9 +88,7 @@ class _ListFoodViewState extends State<ListFoodView> with AutomaticKeepAliveClie
             itemBuilder: (context, index) {
               final data = bloc.listFoods[index];
               final imgUrl = data.strMealThumb;
-              // final heroTag = 'list_food_${data.idMeal}_$index';
               return FoodCard(
-                // heroTag: heroTag,
                 heroTag: '$index',
                 imgUrl: imgUrl ?? '',
                 foodName: data.strMeal ?? '',

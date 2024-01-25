@@ -6,9 +6,13 @@ import 'package:skeleton/app/bloc/database_bloc/database_bloc_bloc.dart';
 import 'package:skeleton/app/bloc/detail_food_bloc/detail_food_bloc.dart';
 import 'package:skeleton/app/bloc/favorite_food_bloc/favorite_food_bloc.dart';
 import 'package:skeleton/app/components/default_text.dart';
+import 'package:skeleton/app/routes/app_pages.dart';
 import 'package:skeleton/config/color_constants.dart';
 import 'package:skeleton/config/constant.dart';
 import 'package:skeleton/config/function_utils.dart';
+
+import '../components/ingridients_card.dart';
+import '../components/instruction_card.dart';
 
 class DetailFoodView extends StatefulWidget {
   const DetailFoodView({Key? key}) : super(key: key);
@@ -24,17 +28,18 @@ class _DetailFoodViewState extends State<DetailFoodView> {
     final bloc = context.read<DetailFoodBloc>();
     bloc.add(DetailFoodGet());
     bloc.scrollController.addListener(() {
-      // logKey('scrollController.offset', scrollController.offset);
+      // logKey(bloc.scrollController.offset);
       bloc.add(DetailFoodChangeAppbarOpacity(offset: bloc.scrollController.offset));
-      // logKey('opacity', context.read<DetailFoodBloc>().opacity);
+      // if (bloc.scrollController.offset >= 350) {
+      //   bloc.opacity = 1;
+      // }
+      // bloc.opacity = (bloc.scrollController.offset / 350);
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    // context.read<DetailFoodBloc>().close();
     super.dispose();
   }
 
@@ -42,23 +47,38 @@ class _DetailFoodViewState extends State<DetailFoodView> {
   Widget build(BuildContext context) {
     final bloc = context.read<DetailFoodBloc>();
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final favFoodBloc = context.read<FavoriteFoodBloc>();
-          final dbBloc = context.read<DatabaseBloc>();
-          favFoodBloc.add(
-            FavoriteFoodsAddFavorite(
-              foodData: bloc.foodData,
-              dbBloc: dbBloc,
+      floatingActionButton: BlocBuilder<DetailFoodBloc, DetailFoodState>(
+        buildWhen: (previous, current) {
+          return current == DetailFoodLoading() || current == DetailFoodComplete() || current == DetailFoodError();
+        },
+        builder: (context, state) {
+          return Visibility(
+            visible: state == DetailFoodComplete() && Get.previousRoute != Routes.LIST_FAVORITES_FOOD,
+            child: FloatingActionButton(
+              backgroundColor: kPrimaryColor,
+              child: const Icon(
+                Icons.save_outlined,
+                color: kWhiteMilk,
+              ),
+              onPressed: () {
+                
+                // return;
+                final favFoodBloc = context.read<FavoriteFoodBloc>();
+                final dbBloc = context.read<DatabaseBloc>();
+                favFoodBloc.add(
+                  FavoriteFoodsAddFavorite(
+                    foodData: bloc.foodData,
+                    dbBloc: dbBloc,
+                  ),
+                );
+              },
             ),
           );
         },
       ),
       backgroundColor: kBgWhite,
       body: BlocConsumer<DetailFoodBloc, DetailFoodState>(
-        listener: (context, state) {
-          // TODO: implement listener
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           return Stack(
             children: [
@@ -72,27 +92,24 @@ class _DetailFoodViewState extends State<DetailFoodView> {
               ),
               CustomScrollView(
                 controller: bloc.scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
+                // physics: state == DetailFoodComplete() ? const AlwaysScrollableScrollPhysics() : const NeverScrollableScrollPhysics(),
                 slivers: [
+                  //* appbar
                   BlocConsumer<DetailFoodBloc, DetailFoodState>(
-                    listener: (context, state) {
-                      // TODO: implement listener
-                      // logKey('listener state change di appbar', state);
-                    },
-                    buildWhen: (previous, current) {
-                      final res = current == DetailFoodAppBarNotShowed() || current == DetailFoodAppBarShowed();
-                      return res;
-                    },
+                    listener: (context, state) {},
                     builder: (context, state) {
-                      logKey('appbar rebuilt');
                       return SliverOpacity(
-                        opacity: state == DetailFoodAppBarShowed() ? 1 : 0,
-                        // opacity: 0,
+                        opacity: bloc.opacity,
                         sliver: SliverAppBar(
                           pinned: true,
                           surfaceTintColor: Colors.transparent,
-                          shadowColor: Colors.amber,
+                          shadowColor: kBgBlack,
                           elevation: 10,
+                          centerTitle: true,
+                          title: DefText(
+                            bloc.foodData.strMeal ?? '',
+                            color: kWhiteMilk,
+                          ).huge,
                           leading: IconButton(
                             onPressed: () {
                               Get.back();
@@ -106,203 +123,111 @@ class _DetailFoodViewState extends State<DetailFoodView> {
                       );
                     },
                   ),
-                  SliverToBoxAdapter(
-                    child: Container(
+                  //* transparrent box
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
                       height: 250,
                     ),
                   ),
-                  // const SliverToBoxAdapter(
-                  //   child: SizedBox(height: 10),
-                  // ),
-
                   SliverToBoxAdapter(
                     child: Container(
+                      padding: kDefaultScaffoldPadding,
                       decoration: const BoxDecoration(
                         color: kBgWhite,
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(10),
                         ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DefText(
-                            bloc.foodData.strMeal ?? '',
-                            color: kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                          ).huge,
-                          Container(
-                            child: DefText(
-                              bloc.foodData.strCategory ?? '',
-                              color: kSecondaryColor,
-                              fontWeight: FontWeight.bold,
-                            ).large,
-                          ),
-                          Container(
-                            child: DefText(
-                              bloc.foodData.strArea ?? '',
-                              color: kSecondaryColor,
-                              fontWeight: FontWeight.bold,
-                            ).large,
-                          ),
-                          ListView.separated(
-                            itemCount: 20,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            separatorBuilder: (context, index) {
-                              final ingredient = bloc.foodData.toJson()['strIngredient${index + 1}'];
-                              final measure = bloc.foodData.toJson()['strMeasure${index + 1}'];
-                              if (isEmpty(ingredient) || isEmpty(measure)) {
-                                return Container();
-                              }
-                              return const SizedBox(height: 10);
+                      child: BlocBuilder<DetailFoodBloc, DetailFoodState>(
+                        buildWhen: (previous, current) {
+                          return current == DetailFoodLoading() || current == DetailFoodComplete() || current == DetailFoodError();
+                        },
+                        builder: (context, state) {
+                          if (state == DetailFoodError()) {
+                            return Center(
+                              child: DefText('Error').huge,
+                            );
+                          }
+                          return AnimatedCrossFade(
+                            crossFadeState: state == DetailFoodLoading() ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                            duration: kDefaultFastDuration,
+                            layoutBuilder: (topChild, topChildKey, bottomChild, bottomChildKey) {
+                              return topChild;
                             },
-                            itemBuilder: (context, index) {
-                              String ingredient = bloc.foodData.toJson()['strIngredient${index + 1}'] ?? '';
-                              String measure = bloc.foodData.toJson()['strMeasure${index + 1}'] ?? '';
-                              if (isEmpty(ingredient) || isEmpty(measure)) {
-                                return Container();
-                              }
-                              return Container(
-                                padding: kDefaultScaffoldPadding,
-                                child: Row(
-                                  children: [
-                                    DefText(ingredient).semilarge,
-                                    const SizedBox(width: 10),
-                                    DefText(
-                                      measure,
+                            firstChild: Container(
+                              height: Get.height,
+                            ),
+                            secondChild: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 10),
+                                //* title
+                                Center(
+                                  child: Opacity(
+                                    opacity: bloc.iconOpacity,
+                                    child: DefText(
+                                      bloc.foodData.strMeal ?? '',
+                                      color: kPrimaryColor,
                                       fontWeight: FontWeight.bold,
-                                    ).semilarge,
-                                  ],
+                                      textAlign: TextAlign.center,
+                                    ).huge,
+                                  ),
                                 ),
-                              );
-                            },
-                          ),
-                          DefText(
-                            'Instructions :',
-                            fontWeight: FontWeight.bold,
-                          ).extraLarge,
-                          const SizedBox(height: 10),
-                          Container(
-                            child: DefText(
-                              bloc.foodData.strInstructions ?? '',
-                            ).semilarge,
-                          ),
-                        ],
+                                //* category and country
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: DefText(
+                                          bloc.foodData.strCategory ?? '',
+                                          color: kSecondaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ).large,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      const SizedBox(
+                                        height: 15,
+                                        child: VerticalDivider(
+                                          color: kSecondaryColor,
+                                          width: 2,
+                                          thickness: 2,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Container(
+                                        child: DefText(
+                                          bloc.foodData.strArea ?? '',
+                                          color: kSecondaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ).large,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                //* tags
+                                Visibility(
+                                  visible: isNotEmpty(bloc.foodData.strTags),
+                                  child: Center(
+                                    child: DefText(
+                                      bloc.foodData.strTags ?? '',
+                                      color: kSecondaryColor,
+                                    ).large,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                IngridientsCard(bloc: bloc),
+                                const SizedBox(height: 10),
+                                const SizedBox(height: 10),
+                                InstructionCard(bloc: bloc),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
-                  // SliverToBoxAdapter(
-                  //   child: BlocBuilder<DetailFoodBloc, DetailFoodState>(
-                  //     bloc: bloc,
-                  //     builder: (context, state) {
-                  //       return Padding(
-                  //         padding: kDefaultScaffoldPadding,
-                  //         child: Column(
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Container(
-                  //               child: DefText(
-                  //                 bloc.foodData.strMeal ?? '',
-                  //                 color: kPrimaryColor,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ).extraHuge,
-                  //             ),
-                  //             Container(
-                  //               child: DefText(
-                  //                 bloc.foodData.strCategory ?? '',
-                  //                 color: kSecondaryColor,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ).large,
-                  //             ),
-                  //             Container(
-                  //               child: DefText(
-                  //                 bloc.foodData.strArea ?? '',
-                  //                 color: kSecondaryColor,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ).large,
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
-                  // const SliverToBoxAdapter(
-                  //   child: SizedBox(height: 10),
-                  // ),
-                  // BlocBuilder<DetailFoodBloc, DetailFoodState>(
-                  //   bloc: bloc,
-                  //   buildWhen: (previous, current) {
-                  //     // final res = current != DetailFoodAppBarNotShowed() && current != DetailFoodAppBarShowed();
-                  //     // return res;
-                  //     logKey(current);
-                  //     // return current == DetailFoodComplete();
-                  //     return false;
-                  //   },
-                  //   builder: (context, state) {
-                  //     logKey('ingridient rebuilt');
-                  //     return SliverList.separated(
-                  //       itemCount: 20,
-                  //       separatorBuilder: (context, index) {
-                  //         final ingredient = bloc.foodData.toJson()['strIngredient${index + 1}'];
-                  //         final measure = bloc.foodData.toJson()['strMeasure${index + 1}'];
-                  //         if (isEmpty(ingredient) || isEmpty(measure)) {
-                  //           return Container();
-                  //         }
-                  //         return const SizedBox(height: 10);
-                  //       },
-                  //       itemBuilder: (context, index) {
-                  //         String ingredient = bloc.foodData.toJson()['strIngredient${index + 1}'] ?? '';
-                  //         String measure = bloc.foodData.toJson()['strMeasure${index + 1}'] ?? '';
-                  //         if (isEmpty(ingredient) || isEmpty(measure)) {
-                  //           return Container();
-                  //         }
-                  //         return Container(
-                  //           padding: kDefaultScaffoldPadding,
-                  //           child: Row(
-                  //             children: [
-                  //               DefText(ingredient).semilarge,
-                  //               const SizedBox(width: 10),
-                  //               DefText(
-                  //                 measure,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ).semilarge,
-                  //             ],
-                  //           ),
-                  //         );
-                  //       },
-                  //     );
-                  //   },
-                  // ),
-                  // const SliverToBoxAdapter(
-                  //   child: SizedBox(height: 10),
-                  // ),
-                  // SliverToBoxAdapter(
-                  //   child: BlocBuilder<DetailFoodBloc, DetailFoodState>(
-                  //     bloc: bloc,
-                  //     builder: (context, state) {
-                  //       return Padding(
-                  //         padding: kDefaultScaffoldPadding,
-                  //         child: Column(
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             DefText(
-                  //               'Instructions :',
-                  //               fontWeight: FontWeight.bold,
-                  //             ).extraLarge,
-                  //             const SizedBox(height: 10),
-                  //             Container(
-                  //               child: DefText(
-                  //                 bloc.foodData.strInstructions ?? '',
-                  //               ).semilarge,
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
                   const SliverToBoxAdapter(
                     child: SizedBox(height: 10),
                   ),
@@ -311,25 +236,32 @@ class _DetailFoodViewState extends State<DetailFoodView> {
                   ),
                 ],
               ),
-              Positioned(
-                top: 35,
-                left: 10,
-                child: GestureDetector(
-                  onTap: () {
-                    Get.back();
-                    // logKey('asdasd');
-                  },
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: kBgWhite,
-                      shape: BoxShape.circle,
+              BlocBuilder<DetailFoodBloc, DetailFoodState>(
+                builder: (context, state) {
+                  return Positioned(
+                    top: 35,
+                    left: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.back();
+                        // logKey('asdasd');
+                      },
+                      child: Opacity(
+                        opacity: bloc.iconOpacity,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: kBgWhite,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(
+                            Icons.arrow_back_ios_new_outlined,
+                          ),
+                        ),
+                      ),
                     ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new_outlined,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
             ],
           );
